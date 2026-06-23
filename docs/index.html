@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hand Gesture Scoreboard — Axis ACAP</title>
+<style>
+  :root {
+    --accent: #1a6fc4;
+    --accent2: #0d9488;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --fg: #0f172a;
+    --muted: #64748b;
+    --code-bg: #f1f5f9;
+    --radius: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1a6fc4 100%);
+    color: #fff;
+    padding: 72px 24px 60px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 12px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: clamp(15px, 2vw, 18px);
+    color: rgba(255,255,255,.8);
+    max-width: 580px;
+    margin: 0 auto 32px;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 8px; font-weight: 600;
+    font-size: 14px; text-decoration: none; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-outline { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 56px 0; }
+  section + section { border-top: 1px solid var(--border); }
+  h2 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  h3 { font-size: 17px; font-weight: 600; margin-bottom: 8px; color: var(--accent); }
+  p { color: var(--muted); margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Feature grid ── */
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 32px; }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .feature-icon { font-size: 28px; margin-bottom: 12px; }
+
+  /* ── Section: Views ── */
+  .views-list { margin-top: 28px; display: flex; flex-direction: column; gap: 16px; }
+  .view-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 600px) { .view-item { grid-template-columns: 1fr; } }
+  .view-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--fg);
+  }
+  .view-tag {
+    display: inline-block;
+    background: var(--code-bg);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-top: 4px;
+  }
+
+  /* ── Rules table ── */
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+  th { background: var(--code-bg); text-align: left; padding: 9px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  td { padding: 9px 14px; border-top: 1px solid var(--border); }
+  tr:hover td { background: #fafafa; }
+
+  /* ── Code ── */
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 16px;
+  }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; }
+  p code, li code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--fg);
+  }
+
+  /* ── Cooldown diagram ── */
+  .cooldown-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .zone-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .zone-row:last-child { margin-bottom: 0; }
+  .zone-label { width: 72px; font-weight: 600; flex-shrink: 0; }
+  .bar-wrap { flex: 1; height: 28px; background: var(--code-bg); border-radius: 6px; overflow: hidden; position: relative; }
+  .bar-full { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent); opacity: .85; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; color: #fff; font-size: 11px; font-weight: 600; }
+  .bar-half { position: absolute; left: 0; top: 0; height: 100%; background: var(--accent2); opacity: .75; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; color: #fff; font-size: 11px; font-weight: 600; }
+
+  /* ── Gesture zoom ── */
+  .gesture-zoom-wrap {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin: 20px 0;
+    cursor: zoom-in;
+    background: var(--surface);
+  }
+  .gesture-zoom-wrap img {
+    width: 100%;
+    display: block;
+    transform-origin: 50% 50%;
+    transition: transform .12s ease;
+    pointer-events: none;
+    user-select: none;
+  }
+  .gesture-zoom-wrap.zoomed {
+    cursor: crosshair;
+  }
+  .gesture-zoom-wrap.zoomed img {
+    transform: scale(3);
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: #0f172a;
+    color: rgba(255,255,255,.5);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13px;
+  }
+  footer a { color: rgba(255,255,255,.7); text-decoration: none; }
+  footer a:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ── Hero ──────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-badge">Axis ACAP · ARTPEC-8 · AXIS OS 11+</div>
+  <h1>Hand Gesture Scoreboard</h1>
+  <p>On-camera gesture detection driving a live dual scoreboard — one .eap, no companion app, no MQTT required.</p>
+  <div class="hero-btns">
+    <a href="https://github.com/[your-org]/handgesture_scoreboard/releases" class="btn btn-primary">⬇ Download .eap</a>
+    <a href="https://github.com/[your-org]/handgesture_scoreboard" class="btn btn-outline">GitHub →</a>
+  </div>
+</div>
+
+<!-- ── How it works ──────────────────────────────────────────── -->
+<div class="container">
+<section>
+  <h2>How it works</h2>
+  <p>The camera runs a TFLite hand gesture model on every frame using the on-chip DLPU. When a gesture is recognised inside a configured zone, its scoring rule fires — and both scores are pushed to a <strong>CamOverlay Custom Graphics</strong> service in real time.</p>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🤙</div>
+      <h3>Gesture detection</h3>
+      <p>TFLite model runs on-camera at inference time &lt;10 ms using the DLPU — no cloud, no external server.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Dual zones</h3>
+      <p>Draw Home and Visitors zones over a camera snapshot. Any gesture inside a zone scores for that side.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📺</div>
+      <h3>CamOverlay output</h3>
+      <p>Scores are written directly to a CamOverlay Custom Graphics service — on-screen scoreboard updates instantly.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Cooldown guard</h3>
+      <p>Per-zone and cross-zone cooldown prevents accidental multi-scoring from model flicker or hand movement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Gesture reference ──────────────────────────────────────── -->
+<section>
+  <h2>Gesture reference</h2>
+  <p>The model recognises 20 gestures. Default scoring rules are pre-configured for the most common ones — every rule is editable in the Scoring Rules panel.</p>
+  <div class="gesture-zoom-wrap" id="gestureWrap">
+    <img src="img/hand-gestures.png" id="gestureImg" alt="All recognised hand gestures">
+  </div>
+  <table>
+    <thead><tr><th>Emoji</th><th>Label</th><th>Default rule</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td style="font-size:22px;">👍</td><td><code>like</code></td><td><strong>+1</strong></td><td>Thumbs up</td></tr>
+      <tr><td style="font-size:22px;">👎</td><td><code>dislike</code></td><td><strong>−1</strong></td><td>Thumbs down</td></tr>
+      <tr><td style="font-size:22px;">✊</td><td><code>fist</code></td><td><strong>reset</strong></td><td>Closed fist</td></tr>
+      <tr><td style="font-size:22px;">🖐️</td><td><code>palm</code></td><td><strong>+1</strong></td><td>Open palm facing forward</td></tr>
+      <tr><td style="font-size:22px;">✋</td><td><code>stop</code></td><td><strong>+1</strong></td><td>Stop — palm forward, fingers together</td></tr>
+      <tr><td style="font-size:22px;">🤚</td><td><code>stop_inverted</code></td><td><strong>+1</strong></td><td>Stop — back of hand facing forward</td></tr>
+      <tr><td style="font-size:22px;">🤙</td><td><code>call</code></td><td>—</td><td>Call me — thumb and pinky extended</td></tr>
+      <tr><td style="font-size:22px;">✌️</td><td><code>peace</code></td><td>—</td><td>Peace / V sign, palm forward</td></tr>
+      <tr><td style="font-size:22px;">🤞</td><td><code>peace_inverted</code></td><td>—</td><td>Peace / V sign, back of hand forward</td></tr>
+      <tr><td style="font-size:22px;">🤘</td><td><code>rock</code></td><td>—</td><td>Rock on — index and pinky extended</td></tr>
+      <tr><td style="font-size:22px;">👌</td><td><code>ok</code></td><td>—</td><td>OK — thumb and index circle</td></tr>
+      <tr><td style="font-size:22px;">☝️</td><td><code>one</code></td><td>—</td><td>One finger pointing up</td></tr>
+      <tr><td style="font-size:22px;">✌️</td><td><code>two_up</code></td><td>—</td><td>Two fingers pointing up, palm forward</td></tr>
+      <tr><td style="font-size:22px;">🤞</td><td><code>two_up_inverted</code></td><td>—</td><td>Two fingers pointing up, back of hand forward</td></tr>
+      <tr><td style="font-size:22px;">🤟</td><td><code>three</code></td><td>—</td><td>Three fingers extended</td></tr>
+      <tr><td style="font-size:22px;">🖖</td><td><code>four</code></td><td>—</td><td>Four fingers extended</td></tr>
+      <tr><td style="font-size:22px;">🤌</td><td><code>thumb_index</code></td><td>—</td><td>Thumb and index finger extended</td></tr>
+      <tr><td style="font-size:22px;">🖕</td><td><code>middle_finger</code></td><td>—</td><td>Middle finger</td></tr>
+      <tr><td style="font-size:22px;">🤫</td><td><code>mute</code></td><td>—</td><td>Index finger to lips / shush</td></tr>
+      <tr><td style="font-size:22px;">⬜</td><td><code>no_gesture</code></td><td>—</td><td>No recognised gesture (ignored)</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:14px;">Gestures with the same default rule (e.g. <code>palm</code>, <code>stop</code>, <code>stop_inverted</code> → all +1) share a cooldown bucket — only the first one detected per frame fires. Any gesture can be assigned any rule in the UI.</p>
+</section>
+
+<!-- ── Cooldown ───────────────────────────────────────────────── -->
+<section>
+  <h2>Cooldown behaviour</h2>
+  <p>After a gesture scores, two timers start to prevent accidental double-counting:</p>
+  <div class="cooldown-diagram">
+    <div class="zone-row">
+      <div class="zone-label">Same zone</div>
+      <div class="bar-wrap">
+        <div class="bar-full" style="width:100%;">full cooldown (e.g. 3 000 ms)</div>
+      </div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-label">Other zone</div>
+      <div class="bar-wrap">
+        <div class="bar-half" style="width:50%;">half cooldown (1 500 ms)</div>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:14px;">The cross-zone guard prevents a gesture made while moving a hand between zones from accidentally scoring on both sides. After the half-cooldown elapses, the other zone is fully open.</p>
+</section>
+
+<!-- ── Settings views ────────────────────────────────────────── -->
+<section>
+  <h2>Settings &amp; Views</h2>
+  <p>All configuration is in a single settings page. Sections expand/collapse on demand.</p>
+
+  <div class="views-list">
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">🎯 Scoreboard</div>
+        <div class="view-tag">always visible</div>
+      </div>
+      <p>Live Home / Visitors score, zone editor (drag-to-draw over camera snapshot), Reset and Push to Overlay buttons.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Scoring Rules</div>
+        <div class="view-tag">collapsible</div>
+      </div>
+      <p>Map each gesture to <code>+N</code>, <code>-N</code>, or <code>reset</code>. Set to <code>0</code> to ignore a gesture entirely.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">CamOverlay Custom Graphics</div>
+        <div class="view-tag">collapsible</div>
+      </div>
+      <p>Service ID, field names, text colours (RRRGGGBBB), show/hide overlay gestures, LED blink on score, and cooldown duration.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Games / Sets</div>
+        <div class="view-tag">collapsible · optional</div>
+      </div>
+      <p>Win-tracking layer. When a side reaches the target points and leads by the win-by margin, it wins a game — points reset, game count increments. Game counts pushed to <code>field3</code> / <code>field4</code>.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Live Detection View</div>
+        <div class="view-tag">collapsible · lazy-loaded</div>
+      </div>
+      <p>Live camera stream with gesture bounding boxes overlaid. Contains two sub-tabs: <strong>Area of Interest</strong> (polygon, limits where detections are processed) and <strong>Exclude Areas</strong> (suppress detections in specific regions).</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Detection Settings</div>
+        <div class="view-tag">collapsible</div>
+      </div>
+      <p>Confidence threshold, active gesture labels, prioritise accuracy vs. responsiveness, stabilize transition duration.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">SD Card Training Capture</div>
+        <div class="view-tag">collapsible · optional</div>
+      </div>
+      <p>Saves full-frame JPEGs and YOLO-format label files to SD card on detection — for building site-specific training datasets. Includes Download Archive and Clear buttons.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">MQTT</div>
+        <div class="view-tag">collapsible · optional</div>
+      </div>
+      <p>Optional MQTT output for integrations. Topics: <code>detectx/detection/&lt;serial&gt;</code>, <code>detectx/events/&lt;serial&gt;/&lt;label&gt;/true|false</code>, <code>detectx/crops/&lt;serial&gt;</code>.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Detection Export</div>
+        <div class="view-tag">collapsible · optional</div>
+      </div>
+      <p>Cropped images of each detected gesture via MQTT or HTTP POST. Configurable border padding and output throttle. Gallery shows the 10 most recent crops.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">Model</div>
+        <div class="view-tag">collapsible</div>
+      </div>
+      <p>Upload a replacement <code>.tflite</code> model and <code>labels.txt</code> directly from the browser — no SSH or Docker rebuild needed.</p>
+    </div>
+
+    <div class="view-item">
+      <div>
+        <div class="view-name">About</div>
+        <div class="view-tag">collapsible</div>
+      </div>
+      <p>Live dashboard: app name/version/vendor, device model/firmware/serial/CPU load, model status/inference time/DLPU, MQTT broker status.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Build & Install ───────────────────────────────────────── -->
+<section>
+  <h2>Build &amp; Install</h2>
+  <h3>Requirements</h3>
+  <p>Axis camera with ARTPEC-8 (aarch64), AXIS OS 11+, Docker Desktop, and CamOverlay installed on the camera.</p>
+
+  <h3 style="margin-top:20px;">Build</h3>
+<pre><code>git clone https://github.com/[your-org]/handgesture_scoreboard
+cd handgesture_scoreboard
+docker build --platform linux/arm64 -t handgesture_scoreboard .
+# extract .eap from container
+</code></pre>
+
+  <h3 style="margin-top:20px;">Install</h3>
+  <p>Camera → <strong>System → Apps</strong> → enable <em>Allow unsigned apps</em> → upload <code>.eap</code> → wait ~20 s for model to load.</p>
+
+  <h3 style="margin-top:20px;">CamOverlay setup</h3>
+  <p>Create a Custom Graphics service with at least two text fields (<code>field1</code> = Home score, <code>field2</code> = Visitors score). Default service ID is <strong>20</strong>. If using Games/Sets, add <code>field3</code> / <code>field4</code> for game counts.</p>
+</section>
+
+<!-- ── Troubleshooting ───────────────────────────────────────── -->
+<section>
+  <h2>Troubleshooting</h2>
+  <table>
+    <thead><tr><th>Symptom</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>Overlay not updating</td><td>Check CamOverlay service ID and field names; check the CamOverlay chip on the Scoreboard panel</td></tr>
+      <tr><td>Score fires multiple times</td><td>Increase the Cooldown value</td></tr>
+      <tr><td>Cross-zone accidental score</td><td>Increase Cooldown — cross-zone guard is half the cooldown value</td></tr>
+      <tr><td>503 errors in browser</td><td>ACAP crashed — restart the app from System → Apps</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:14px;">Syslog: <code>ssh root@&lt;ip&gt; "tail -f /var/log/syslog | grep Scoreboard"</code></p>
+</section>
+
+</div><!-- /container -->
+
+<!-- ── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <p>Hand Gesture Scoreboard · Built on <a href="https://github.com/pandosme/DetectX" target="_blank">DetectX</a> by Fred Juhlin · MIT License</p>
+</footer>
+
+<script>
+(function(){
+  var wrap = document.getElementById('gestureWrap');
+  var img  = document.getElementById('gestureImg');
+  if (!wrap || !img) return;
+
+  wrap.addEventListener('mouseenter', function(){ wrap.classList.add('zoomed'); });
+  wrap.addEventListener('mouseleave', function(){
+    wrap.classList.remove('zoomed');
+    img.style.transformOrigin = '50% 50%';
+  });
+  wrap.addEventListener('mousemove', function(e){
+    var r = wrap.getBoundingClientRect();
+    // 12% inset tolerance: mouse only needs to reach 12% from the edge
+    // to pan to the very top/bottom of the image — no pixel-perfect edging required
+    var inset = 0.12;
+    var rawX = (e.clientX - r.left) / r.width;
+    var rawY = (e.clientY - r.top)  / r.height;
+    var x = Math.max(0, Math.min(1, (rawX - inset) / (1 - 2 * inset))) * 100;
+    var y = Math.max(0, Math.min(1, (rawY - inset) / (1 - 2 * inset))) * 100;
+    img.style.transformOrigin = x + '% ' + y + '%';
+  });
+})();
+</script>
+</body>
+</html>
