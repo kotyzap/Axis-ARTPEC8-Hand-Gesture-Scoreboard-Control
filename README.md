@@ -1,3 +1,4 @@
+<div align="center"><img width="806" height="529" alt="Hand-Scoreboard" src="https://github.com/user-attachments/assets/9129fd14-8ca1-42c5-b8c8-04697f522311" /></div>
 # Hand Gesture Scoreboard
 
 An Axis ACAP that runs a hand-gesture-driven dual scoreboard — detection and scoring in a single `.eap`, no companion app required.
