@@ -12,6 +12,8 @@ Built on the open-source [DetectX](https://github.com/pandosme/DetectX) (Fred Ju
 
 The camera runs gesture detection on every frame. When a gesture is recognised inside a configured zone, its rule is applied to that side's score. Both scores are pushed immediately to a **CamOverlay Custom Graphics** service, so the scoreboard updates on-screen in real time.
 
+<img width="100%" alt="hand-gestures" src="https://github.com/user-attachments/assets/f9188c9b-5ccf-4449-9a8a-b786fec637c5" />
+
 | Zone | Side |
 |------|------|
 | Left half of frame | Home |
